@@ -1,0 +1,17 @@
+{
+    "name": "crushing-industry-realistic-ores-compatibility",
+    "version": "1.0.0",
+    "title": "Crushing Industry - Realistic Ores Compatibility",
+    "description": "Makes Crushing Industry's crushed ore icons compatible with RealisticOres and RealisticOresForSpaceAge mods.",
+    "author": "Sable Drake",
+    "factorio_version": "2.0",
+    "dependencies": [
+        "base >= 2.0",
+        "crushing-industry",
+        "RealisticOres",
+        "? RealisticOresForSpaceAge",
+        "? IndustrialRevolution3Assets1 >= 1.0.0",
+        "? IR3_Assets_crushing_industry >= 0.0.1"
+    ]
+}
+
