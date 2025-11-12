@@ -1,0 +1,52 @@
+name: Create Factorio Mod Release
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Extract mod info
+      id: mod-info
+      run: |
+        MOD_NAME=$(jq -r '.name' info.json)
+        MOD_VERSION=$(jq -r '.version' info.json)
+        echo "name=$MOD_NAME" >> $GITHUB_OUTPUT
+        echo "version=$MOD_VERSION" >> $GITHUB_OUTPUT
+        echo "Mod name: $MOD_NAME"
+        echo "Mod version: $MOD_VERSION"
+        
+    - name: Create Factorio mod zip
+      run: |
+        MOD_NAME="${{ steps.mod-info.outputs.name }}"
+        MOD_VERSION="${{ steps.mod-info.outputs.version }}"
+        ZIP_NAME="${MOD_NAME}_${MOD_VERSION}.zip"
+        
+        # Create zip file excluding git and github files
+        zip -r "$ZIP_NAME" . \
+          -x "*.git*" \
+          -x ".github/*" \
+          -x "*.zip" \
+          -x "*.md" \
+          -x "README*"
+        
+        echo "Created: $ZIP_NAME"
+        ls -lh "$ZIP_NAME"
+        
+    - name: Upload release asset
+      run: |
+        MOD_NAME="${{ steps.mod-info.outputs.name }}"
+        MOD_VERSION="${{ steps.mod-info.outputs.version }}"
+        ZIP_NAME="${MOD_NAME}_${MOD_VERSION}.zip"
+        
+        gh release upload "${{ github.event.release.tag_name }}" "$ZIP_NAME" \
+          --repo "${{ github.repository }}"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
